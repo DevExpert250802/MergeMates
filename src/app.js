@@ -1,36 +1,33 @@
 const express = require('express');
-const connectDB = require("./config/database");
-const app = express();
- 
-const User = require("./models/user.models");
+const connectDB = require('./config/database');
+const User = require('./models/user.models');
 
+const app = express();
 app.use(express.json());
 
 app.post("/signup", async(req,res)=>{
-    
     const user = new User(req.body);
- 
     try{
         await user.save();
-        res.send("data of a user is saved");
+        res.status(201).send('Data of a user is saved');
     }catch(err){
-        res.status(400).send("Error saving the data"+err.message)
+        res.status(400).send("Error saving the data" + err.message)
     }
-
 });
 
 // Get user by email
 app.get("/user", async(req,res)=>{
      const userEmail = req.body.email;
-       
+     if (!userEmail || userEmail.trim() === "") {
+        return res.status(400).json({ error: 'Email query parameter is required.'});
+    }
       try{
         const user = await User.find({email:userEmail});
         if (user.length===0) {
             return res.status(404).send("User not found");
         }else{
-        res.send(user);
+            res.send(user);
         }
-
       }
       catch(err){
         res.status(400).send("Error finding the  user data" + err.message)
@@ -51,18 +48,17 @@ app.get("/feed", async(req,res)=>{
 
 
 app.delete("/user",async(req,res)=> { 
-
     const userId = req.body.userId;
 
-    try{
-      const user = await User.findByIdAndDelete(userId);
-      res.send("user deleted successfully")
- 
-
+    try {
+        const user = await User.findByIdAndDelete(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+        res.status(200).send('User deleted successfully');
+    } catch (err) {
+        res.status(500).json({ error: 'Error deleting the user data', message: err.message });
     }
-    catch(err){
-      res.status(400).send("Error finding the  user data" + err.message)
-  }
 });
 
 
@@ -72,27 +68,23 @@ app.patch("/user", async(req,res)=>{
     const userId = req.body.userId;  
     const data = req.body;
     try{
-        const user = await User.findByIdAndUpdate(userId, data ,{
+         const user = await User.findByIdAndUpdate(userId, data ,{
             returnDocument: "before"
         });
-        console.log(user);
-        res.send("user updated successfully")
-   
-  
-      }
-      catch(err){
-        res.status(400).send("Cannot update   the  user data" + err.message)
+         console.log(user);
+         res.send("user updated successfully")
+        }catch(err){
+         res.status(400).send("Cannot update   the  user data" + err.message)
     }
 });
 
 connectDB()
-.then(()=>{
-   console.log("DB connected")
-   app.listen(3000, () => {
-    console.log("Server is successfully listening on port 3000");
-});
-})
-.catch((err)=>{
-   console.log("DB  can not be connected")
-});
-
+    .then(() => {
+        console.log('DB connected');
+        app.listen(3000, () => {
+            console.log('Server is successfully listening on port 3000');
+        });
+    })
+    .catch((err) => {
+        console.error('DB cannot be connected', err);
+    });
