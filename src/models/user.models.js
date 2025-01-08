@@ -3,13 +3,13 @@ const validator = require("validator");
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
+
+// User Schema Models
 const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
       required: true,
-      unique: true,
-      lowercase: true,
       trim: true,
     },
     lastName: {
@@ -26,7 +26,18 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [8, "Password must be at least 8 characters long"],
+      validate: {
+        validator: function (value) {
+          return validator.isStrongPassword(value, {
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1,
+          });
+        },
+        message: "Password must be at least 8 characters long and include 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol."
+      },
     },
     age: {
       type: Number,
@@ -53,6 +64,7 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
+      default: [],
     },
   },
   {
@@ -60,7 +72,8 @@ const userSchema = new mongoose.Schema(
   }
 );
 
- 
+
+// Get Jwt
 userSchema.methods.getJWT = async function() {
   const user =  this;
   const token = await jwt.sign({_id : user._id }, "Dev@Tinder790",{expiresIn : "1h"});
@@ -68,6 +81,7 @@ userSchema.methods.getJWT = async function() {
 }
 
 
+// Validate Password
 userSchema.methods.validatePassword = async function(passwordInputByUser) {
   const user = this;
   const passwordHash =user.password
@@ -78,5 +92,6 @@ userSchema.methods.validatePassword = async function(passwordInputByUser) {
   );
   return isPasswordValid;
 };
+
 
 module.exports = mongoose.model("User", userSchema);

@@ -3,7 +3,7 @@ const User = require("../models/user.models")
 
 
 const userAuth = async (req, res, next) => {
-    try {
+    try {  
         const cookies = req.cookies;
         const { token } = cookies;
 
@@ -25,7 +25,6 @@ const userAuth = async (req, res, next) => {
     }catch (err) {
         res.status(401).send("Error: " + err.message); // Concatenation
     }       
-    
 };
 
 
