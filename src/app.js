@@ -1,12 +1,15 @@
 const express = require("express");
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const app = express();
 
 // Middleware
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+
 
 
 // Import routers
@@ -17,7 +20,7 @@ const userRouter = require("./routes/user");
 
 
 // use router
-app.use("/auth", authRouter);
+app.use("/", authRouter);
 app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
 app.use("/user", userRouter);  

@@ -7,7 +7,7 @@ const User = require("../models/user.models");
 
 
 // Send Connection Request
-requestRouter.post("/request/send/:status/:toUserId",userAuth,async (req, res) => {
+requestRouter.post("/send/:status/:toUserId",userAuth,async (req, res) => {
     try {
       const fromUserId = req.user._id;
       const toUserId = req.params.toUserId;
@@ -49,7 +49,7 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async (req, res) =
 
   
 // Review Connection Request
-requestRouter.post("/request/review/:status/:requestId",userAuth,async (req, res) => {
+requestRouter.post("/review/:status/:requestId",userAuth,async (req, res) => {
     try {
       const loggedInUser = req.user;
       const { status, requestId } = req.params;

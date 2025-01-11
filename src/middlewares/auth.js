@@ -8,8 +8,7 @@ const userAuth = async (req, res, next) => {
         const { token } = cookies;
 
         if (!token) {
-            console.log("No token found in cookies");
-            throw new Error("Invalid token"); // Ensure response is sent only once
+            return res.status(401).send("Please Login!")
         }
         // Validate the token
         const decodedMessage =  jwt.verify(token, "Dev@Tinder790");
@@ -23,7 +22,7 @@ const userAuth = async (req, res, next) => {
         req.user = user;
         next(); // Proceed to the next middleware or route
     }catch (err) {
-        res.status(401).send("Error: " + err.message); // Concatenation
+        res.status(400).send("Error: " + err.message); // Concatenation
     }       
 };
 
