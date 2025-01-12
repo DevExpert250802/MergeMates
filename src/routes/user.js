@@ -59,7 +59,7 @@ userRouter.get("/connections", userAuth, async (req, res) => {
 });
 
 
-//helping
+ 
 //Retrieves profiles of users who are not interested, ignored, accepted, or rejected on the platform, and excludes their own card. W ith Pagination feature
 userRouter.get("/feed", userAuth, async (req, res) => {
   try {
