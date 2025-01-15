@@ -7,7 +7,7 @@ const User = require("../models/user.models");
 
 
 // Send Connection Request
-requestRouter.post("/send/:status/:toUserId",userAuth,async (req, res) => {
+requestRouter.post("/request/send/:status/:toUserId",userAuth,async (req, res) => {
     try {
       const fromUserId = req.user._id;
       const toUserId = req.params.toUserId;
@@ -41,6 +41,8 @@ requestRouter.post("/send/:status/:toUserId",userAuth,async (req, res) => {
 
       const data = await connectionRequest.save();
 
+
+      
       res.json({message:req.user.username + " is " + status + " in " + toUser.username,data,});
     } catch (err) {
       res.status(400).send("ERROR: " + err.message);
@@ -49,7 +51,7 @@ requestRouter.post("/send/:status/:toUserId",userAuth,async (req, res) => {
 
   
 // Review Connection Request
-requestRouter.post("/review/:status/:requestId",userAuth,async (req, res) => {
+requestRouter.post("/request/review/:status/:requestId",userAuth,async (req, res) => {
     try {
       const loggedInUser = req.user;
       const { status, requestId } = req.params;

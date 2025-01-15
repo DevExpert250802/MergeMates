@@ -2,12 +2,21 @@ const express = require("express");
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-
 const app = express();
 
+
+
 // Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+//cors middleware to allow other IP address and setting thedomains which we want to allow
+app.use(cors({
+     origin: "http://localhost:5173",
+     credentials: true,                  // Required to allow sending cookies
+    }));
+
+//built-in middleware to convert json to js obj
 app.use(express.json());
+
+//built-in middleware to parse cookies
 app.use(cookieParser());
 
 
@@ -19,11 +28,16 @@ const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 
 
+
 // use router
 app.use("/", authRouter);
-app.use("/profile", profileRouter);
-app.use("/request", requestRouter);
-app.use("/user", userRouter);  
+app.use("/", profileRouter);
+app.use("/", requestRouter);
+app.use("/", userRouter);  
+
+
+
+
 
 
 // Connect to the database and start the server

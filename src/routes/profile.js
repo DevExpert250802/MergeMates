@@ -7,7 +7,7 @@ const validator = require("validator");
 
 
 // Get Profile
-profileRouter.get("/view", userAuth, async (req, res) => {
+profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
 
@@ -19,7 +19,7 @@ profileRouter.get("/view", userAuth, async (req, res) => {
 
 
 // Edit Profile
-profileRouter.patch("/edit", userAuth, async (req, res) => {
+profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
     if (!validateEditProfileData(req)) {
       throw new Error("Invalid Edit Request");
@@ -42,7 +42,7 @@ profileRouter.patch("/edit", userAuth, async (req, res) => {
 
 
 // Change Password 
-profileRouter.patch("/changePassword", userAuth, async (req, res) => {
+profileRouter.patch("/profile/changePassword", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
     const { oldPassword, newPassword } = req.body;
