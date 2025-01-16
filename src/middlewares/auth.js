@@ -11,13 +11,14 @@ const userAuth = async (req, res, next) => {
             return res.status(401).send("Please Login!")
         }
         // Validate the token
-        const decodedMessage =  jwt.verify(token, "Dev@Tinder790");
+        const decodedMessage =  jwt.verify(token, process.env.JWT_SECRET);
         const { _id } = decodedMessage;
 
         const user = await User.findById(_id);
         if (!user) {
             throw new Error("User does not exist");
         }
+        
         req.user = user;
         next(); // Proceed to the next middleware or route
     }catch (err) {

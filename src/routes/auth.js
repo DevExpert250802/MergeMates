@@ -16,6 +16,13 @@ authRouter.post("/signup", async (req, res) => {
 
     // encrypt the password
 
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
+
   const passwordHash = await bcrypt.hash(password, 10)
 
     //create a new instance of the user model
@@ -39,6 +46,9 @@ authRouter.post("/signup", async (req, res) => {
 
     res.json({ message: "User Added successfully!", data: savedUser });
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
     res.status(400).send("ERROR : " + err.message);
   }
 });

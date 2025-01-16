@@ -21,7 +21,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      validate: [validator.isEmail, "Invalid email address"],
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Invalid email address: " + value);
+        }
+      },
     },
     password: {
       type: String,
@@ -50,12 +54,21 @@ const userSchema = new mongoose.Schema(
         message: "{VALUE} is not a valid gender type",
       },
     },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+    membershipType: {
+      type: String,
+    },
+
     photoUrl: {
       type: String,
       default: "https://geographyandyou.com/images/user-profile.png",
-      validate: {
-        validator: validator.isURL,
-        message: "Invalid Photo URL",
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Invalid Photo URL: " + value);
+        }
       },
     },
     about: {
@@ -75,9 +88,13 @@ const userSchema = new mongoose.Schema(
 
 // Get Jwt
 userSchema.methods.getJWT = async function() {
-  const user =  this;
-  const token = await jwt.sign({_id : user._id }, "Dev@Tinder790",{expiresIn : "5h"});
-  return token;
+  try {
+    const user = this;
+    const token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    return token;
+  } catch (error) {
+    throw new Error("Error generating JWT: " + error.message);
+  }
 }
 
 
